@@ -39,8 +39,8 @@ public class HistogramValues {
 					red[r]++;
 					green[g]++;
 					blue[b]++;
-					
-					//rgb[intensity]++;
+					if(intensity<256)
+						rgb[intensity]++;
 				}
 			}
 		}

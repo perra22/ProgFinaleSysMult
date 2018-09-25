@@ -1,10 +1,15 @@
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Main {
 
@@ -12,10 +17,18 @@ public class Main {
 		// TODO Auto-generated method stub
 		BufferedImage originalImage = null;
 		HistogramValues isto = null;
+		JFileChooser fileChooser = null;
 		try {
-			originalImage = ImageIO.read(new File("Guinness.jpg"));
-			isto = new HistogramValues(originalImage);
-
+			JFrame FileFrame= new JFrame();
+			fileChooser = new JFileChooser();
+			int result = fileChooser.showOpenDialog(FileFrame);
+			if (result == JFileChooser.APPROVE_OPTION) {
+			    File selectedFile = fileChooser.getSelectedFile();
+			    originalImage = ImageIO.read(new File(selectedFile.getAbsolutePath()));
+			    isto = new HistogramValues(originalImage);
+			}
+			
+			
 		}
 		catch (Exception e) {
 			// TODO: handle exception
@@ -24,52 +37,56 @@ public class Main {
 		
 		isto.calculate();
 		
-		JFrame histogramFrame = new JFrame();
-		JFrame histogramFrameR = new JFrame();
-		JFrame histogramFrameG = new JFrame();
-		JFrame histogramFrameB = new JFrame();
+		if(originalImage.getRaster().getNumBands() == 1) {
+			JFrame histogramFrame = new JFrame();
+		    HistogramPanel histogramBW = new HistogramPanel();
+		    histogramBW.showHistogram(isto.grey);
+		    histogramFrame.add(histogramBW);
+		    histogramFrame.setTitle("B/W Histogram");
+		    histogramFrame.pack();
+		    histogramFrame.setLocationRelativeTo(null); // Center the frame
+		    histogramFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    histogramFrame.setVisible(true);
+		}
+		else {
+			
 
-	    HistogramPanel histogramBW = new HistogramPanel();
-	    HistogramPanel histogramR = new HistogramPanel();
-	    HistogramPanel histogramG = new HistogramPanel();
-	    HistogramPanel histogramB = new HistogramPanel();
+			JFrame histogramFrame= new JFrame();
+			
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+			
+		    HistogramPanel histogramR = new HistogramPanel();
+		    HistogramPanel histogramG = new HistogramPanel();
+		    HistogramPanel histogramB = new HistogramPanel();
+		    HistogramPanel histogramI = new HistogramPanel();
+		    
+		    histogramR.setBorder(BorderFactory.createTitledBorder("Red Histogram"));
+		    histogramG.setBorder(BorderFactory.createTitledBorder("Green Histogram"));
+		    histogramB.setBorder(BorderFactory.createTitledBorder("Blue Histogram"));
+		    histogramI.setBorder(BorderFactory.createTitledBorder("Intensity Histogram"));
 
-	    // Send the data to the histogram for display
-	    histogramBW.showHistogram(isto.grey);
-	    histogramR.showHistogram(isto.red);
-	    histogramG.showHistogram(isto.green);
-	    histogramB.showHistogram(isto.blue);
-	    
-	    
-	    // Create a new frame to hold the histogram panel
-	    histogramFrame.add(histogramBW);
-	    histogramFrameR.add(histogramR);
-	    histogramFrameG.add(histogramG);
-	    histogramFrameB.add(histogramB);
-	    
-	    histogramFrame.setTitle("Example Histogram");
-	    histogramFrame.pack();
-	    histogramFrame.setLocationRelativeTo(null); // Center the frame
-	    histogramFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    histogramFrame.setVisible(true);
-	    
-	    histogramFrameR.setTitle("Example Histogram");
-	    histogramFrameR.pack();
-	    histogramFrameR.setLocationRelativeTo(null); // Center the frame
-	    histogramFrameR.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    histogramFrameR.setVisible(true);
-	    
-	    histogramFrameG.setTitle("Example Histogram");
-	    histogramFrameG.pack();
-	    histogramFrameG.setLocationRelativeTo(null); // Center the frame
-	    histogramFrameG.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    histogramFrameG.setVisible(true);
-	    
-	    histogramFrameB.setTitle("Example Histogram");
-	    histogramFrameB.pack();
-	    histogramFrameB.setLocationRelativeTo(null); // Center the frame
-	    histogramFrameB.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    histogramFrameB.setVisible(true);
+		    // Send the data to the histogram for display
+		    histogramR.showHistogram(isto.red);
+		    histogramG.showHistogram(isto.green);
+		    histogramB.showHistogram(isto.blue);
+		    histogramI.showHistogram(isto.rgb);
+		    
+		    container.add(histogramR);
+		    container.add(histogramG);
+		    container.add(histogramB);
+		    container.add(histogramI);
+		    
+		    histogramFrame.getContentPane().add(container);
+		    
+		    histogramFrame.setTitle("Red Histogram");
+		    histogramFrame.pack();
+		    histogramFrame.setLocationRelativeTo(null); // Center the frame
+		    histogramFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    histogramFrame.setVisible(true);
+		   
+		}
+		
 	}
 
 }
