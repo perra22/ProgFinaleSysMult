@@ -54,7 +54,7 @@ public class Main {
 		    histogramBW.showHistogram(isto.grey);
 
 		    container.add(histogramBW);
-
+    
 		    
 		    histogramFrame.add(container);
 		    histogramFrame.add(label,BorderLayout.EAST);
