@@ -1,14 +1,16 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Label;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Main {
@@ -18,6 +20,7 @@ public class Main {
 		BufferedImage originalImage = null;
 		HistogramValues isto = null;
 		JFileChooser fileChooser = null;
+		JLabel label = null;
 		try {
 			JFrame FileFrame= new JFrame();
 			fileChooser = new JFileChooser();
@@ -26,6 +29,8 @@ public class Main {
 			    File selectedFile = fileChooser.getSelectedFile();
 			    originalImage = ImageIO.read(new File(selectedFile.getAbsolutePath()));
 			    isto = new HistogramValues(originalImage);
+			    ImageIcon icon = new ImageIcon(originalImage);
+		        label = new JLabel(icon);
 			}
 			
 			
@@ -39,9 +44,21 @@ public class Main {
 		
 		if(originalImage.getRaster().getNumBands() == 1) {
 			JFrame histogramFrame = new JFrame();
+			
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+			
 		    HistogramPanel histogramBW = new HistogramPanel();
+		    histogramBW.setBorder(BorderFactory.createTitledBorder("B/W Histogram"));
+
 		    histogramBW.showHistogram(isto.grey);
-		    histogramFrame.add(histogramBW);
+
+		    container.add(histogramBW);
+
+		    
+		    histogramFrame.add(container);
+		    histogramFrame.add(label,BorderLayout.EAST);
+
 		    histogramFrame.setTitle("B/W Histogram");
 		    histogramFrame.pack();
 		    histogramFrame.setLocationRelativeTo(null); // Center the frame
@@ -78,6 +95,7 @@ public class Main {
 		    container.add(histogramI);
 		    
 		    histogramFrame.getContentPane().add(container);
+		    histogramFrame.add(label,BorderLayout.EAST);
 		    
 		    histogramFrame.setTitle("Red Histogram");
 		    histogramFrame.pack();
