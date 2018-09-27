@@ -1,29 +1,39 @@
 import java.awt.BorderLayout;
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.Console;
 import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class Main {
+public class Main implements ActionListener{
 
+	static JFrame FileFrame = null;
+	static JFrame histogramFrame = null;
+	static BufferedImage originalImage = null;
+	static HistogramValues isto = null;
+	static JFileChooser fileChooser = null;
+	static JLabel label = null;
+	static JPanel container = null;
+	static JPanel buttonContainer = null;
+	static JButton bH, bG = null;
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		BufferedImage originalImage = null;
-		HistogramValues isto = null;
-		JFileChooser fileChooser = null;
-		JLabel label = null;
 		try {
-			JFrame FileFrame= new JFrame();
-			fileChooser = new JFileChooser();
+			
+			initializeComponents();
 			int result = fileChooser.showOpenDialog(FileFrame);
 			if (result == JFileChooser.APPROVE_OPTION) {
 			    File selectedFile = fileChooser.getSelectedFile();
@@ -31,6 +41,10 @@ public class Main {
 			    isto = new HistogramValues(originalImage);
 			    ImageIcon icon = new ImageIcon(originalImage);
 		        label = new JLabel(icon);
+		        buttonContainer.add(bH);
+		        buttonContainer.add(bG);
+		        buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.X_AXIS));
+		        	histogramFrame.add(buttonContainer, BorderLayout.SOUTH);
 			}
 			
 			
@@ -43,9 +57,7 @@ public class Main {
 		isto.calculate();
 		
 		if(originalImage.getRaster().getNumBands() == 1) {
-			JFrame histogramFrame = new JFrame();
 			
-			JPanel container = new JPanel();
 			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 			
 		    HistogramPanel histogramBW = new HistogramPanel();
@@ -56,7 +68,7 @@ public class Main {
 		    container.add(histogramBW);
     
 		    
-		    histogramFrame.add(container);
+		    histogramFrame.add(container, BorderLayout.WEST);
 		    histogramFrame.add(label,BorderLayout.EAST);
 
 		    histogramFrame.setTitle("B/W Histogram");
@@ -67,10 +79,7 @@ public class Main {
 		}
 		else {
 			
-
-			JFrame histogramFrame= new JFrame();
 			
-			JPanel container = new JPanel();
 			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 			
 		    HistogramPanel histogramR = new HistogramPanel();
@@ -97,7 +106,6 @@ public class Main {
 		    histogramFrame.getContentPane().add(container);
 		    histogramFrame.add(label,BorderLayout.EAST);
 		    
-		    histogramFrame.setTitle("Red Histogram");
 		    histogramFrame.pack();
 		    histogramFrame.setLocationRelativeTo(null); // Center the frame
 		    histogramFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -105,6 +113,28 @@ public class Main {
 		   
 		}
 		
+	}
+	
+	public static void initializeComponents() {
+		FileFrame= new JFrame();
+		histogramFrame = new JFrame();
+		container = new JPanel();
+		buttonContainer = new JPanel();
+		fileChooser = new JFileChooser();
+		bH = new JButton("Correzione con istogramma");
+		bG = new JButton("Correzione con gamma curve");
+		bH.addActionListener(new Main());
+		bG.addActionListener(new Main());
+		bH.setToolTipText("Effettua una correzione dell'immagine basata sul calcolo degli istogrammi");
+		bG.setToolTipText("Effettua una correzione dell'immagine attraversp una curva gamma");
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		JButton button = (JButton)e.getSource();
+		System.out.println(button.getText());
 	}
 
 }
