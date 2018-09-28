@@ -47,4 +47,25 @@ public class HistogramValues {
 		
 	}
 	
+	public BufferedImage histoCorrection() {
+		BufferedImage modifiedImage = null;
+		int sum = 0;
+		int totPixel = 0;
+		double mean = 0;
+		//immagine in B/W
+		if(grey.length > 0) {
+			for(int i = 0; i<grey.length ; i++) {
+				sum +=  i*grey[i];
+				totPixel += grey[i];
+			}
+			mean = sum/totPixel;
+			System.out.println("Media: " + Double.toString(mean));
+			System.out.println("Somma: " + sum);
+		}
+		else {
+			
+		}
+		return modifiedImage;
+	}
+	
 }

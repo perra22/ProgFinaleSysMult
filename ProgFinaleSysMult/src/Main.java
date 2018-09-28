@@ -115,7 +115,7 @@ public class Main implements ActionListener{
 		
 	}
 	
-	public static void initializeComponents() {
+	private static void initializeComponents() {
 		FileFrame= new JFrame();
 		histogramFrame = new JFrame();
 		container = new JPanel();
@@ -123,6 +123,8 @@ public class Main implements ActionListener{
 		fileChooser = new JFileChooser();
 		bH = new JButton("Correzione con istogramma");
 		bG = new JButton("Correzione con gamma curve");
+		bH.setName("bH");
+		bG.setName("bG");
 		bH.addActionListener(new Main());
 		bG.addActionListener(new Main());
 		bH.setToolTipText("Effettua una correzione dell'immagine basata sul calcolo degli istogrammi");
@@ -134,7 +136,13 @@ public class Main implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		JButton button = (JButton)e.getSource();
-		System.out.println(button.getText());
+		if(button.getName().equals("bH")) {
+			isto.histoCorrection();
+		}
+		else {
+			
+		}
+		
 	}
 
 }
