@@ -22,7 +22,7 @@ public class Main implements ActionListener{
 
 	static JFrame FileFrame = null;
 	static JFrame histogramFrame = null;
-	static BufferedImage originalImage = null;
+	static BufferedImage originalImage = null, modifiedImage = null;;
 	static HistogramValues isto = null;
 	static JFileChooser fileChooser = null;
 	static JLabel label = null;
@@ -137,7 +137,14 @@ public class Main implements ActionListener{
 		// TODO Auto-generated method stub
 		JButton button = (JButton)e.getSource();
 		if(button.getName().equals("bH")) {
-			isto.histoCorrection();
+			modifiedImage = isto.histoCorrection();
+			JLabel label = new JLabel(new ImageIcon(modifiedImage)); 
+			JFrame f = new JFrame("Corrected picture"); 
+			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+			f.getContentPane().add(label);
+			f.pack();
+			f.setLocation(100,100);
+			f.setVisible(true);
 		}
 		else {
 			

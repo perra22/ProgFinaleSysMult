@@ -48,19 +48,30 @@ public class HistogramValues {
 	}
 	
 	public BufferedImage histoCorrection() {
-		BufferedImage modifiedImage = null;
+		BufferedImage modifiedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		int sum = 0;
 		int totPixel = 0;
 		double mean = 0;
 		//immagine in B/W
 		if(grey.length > 0) {
-			for(int i = 0; i<grey.length ; i++) {
+			for(int i = 0; i < grey.length ; i++) {
 				sum +=  i*grey[i];
 				totPixel += grey[i];
 			}
 			mean = sum/totPixel;
-			System.out.println("Media: " + Double.toString(mean));
-			System.out.println("Somma: " + sum);
+			double vm = mean/4;
+			double Vm = 256 - vm;
+			for(int x = 0; x < image.getWidth(); x++) {
+				for(int y = 0; y < image.getHeight(); y++) {
+					if(image.getRaster().getSample(x, y, 0) < vm || image.getRaster().getSample(x, y, 0) > Vm) {
+						int g = image.getRaster().getSample(x, y, 0);
+						modifiedImage.getRaster().setSample(x, y, 0, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
+					}
+					else {
+						modifiedImage.getRaster().setSample(x, y, 0, image.getRaster().getSample(x, y, 0));
+					}
+				}
+			}
 		}
 		else {
 			
