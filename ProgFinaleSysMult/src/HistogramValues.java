@@ -63,13 +63,13 @@ public class HistogramValues {
 			double Vm = 256 - vm;
 			for(int x = 0; x < image.getWidth(); x++) {
 				for(int y = 0; y < image.getHeight(); y++) {
-					if(image.getRaster().getSample(x, y, 0) < vm || image.getRaster().getSample(x, y, 0) > Vm) {
+					//if(image.getRaster().getSample(x, y, 0) < vm || image.getRaster().getSample(x, y, 0) > Vm) {
 						int g = image.getRaster().getSample(x, y, 0);
 						modifiedImage.getRaster().setSample(x, y, 0, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
-					}
-					else {
-						modifiedImage.getRaster().setSample(x, y, 0, image.getRaster().getSample(x, y, 0));
-					}
+					//}
+					//else {
+					//	modifiedImage.getRaster().setSample(x, y, 0, image.getRaster().getSample(x, y, 0));
+					//}
 				}
 			}
 		}

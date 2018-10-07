@@ -138,10 +138,19 @@ public class Main implements ActionListener{
 		JButton button = (JButton)e.getSource();
 		if(button.getName().equals("bH")) {
 			modifiedImage = isto.histoCorrection();
+			HistogramValues istoCorrected = new HistogramValues(modifiedImage);
+			istoCorrected.calculate();
+			
 			JLabel label = new JLabel(new ImageIcon(modifiedImage)); 
 			JFrame f = new JFrame("Corrected picture"); 
+			
+			HistogramPanel histogramBW = new HistogramPanel();
+		    histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
+		    histogramBW.showHistogram(istoCorrected.grey);
+		    
 			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-			f.getContentPane().add(label);
+			f.getContentPane().add(label,BorderLayout.EAST);
+			f.getContentPane().add(histogramBW);
 			f.pack();
 			f.setLocation(100,100);
 			f.setVisible(true);
