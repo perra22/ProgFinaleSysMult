@@ -53,7 +53,7 @@ public class HistogramValues {
 		int totPixel = 0;
 		double mean = 0;
 		//immagine in B/W
-		if(grey.length > 0) {
+		if(bands==1) {
 			for(int i = 0; i < grey.length ; i++) {
 				sum +=  i*grey[i];
 				totPixel += grey[i];
@@ -74,6 +74,17 @@ public class HistogramValues {
 			}
 		}
 		else {
+			//double vm = mean/4;
+			double vm = 20;
+			double Vm = 256 - vm;
+			for(int b = 0; b<bands;b++) {
+				for(int x = 0; x < image.getWidth(); x++) {
+					for(int y = 0; y < image.getHeight(); y++) {
+							int g = image.getRaster().getSample(x, y, b);
+							modifiedImage.getRaster().setSample(x, y, b, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
+					}
+				}
+			}
 			
 		}
 		return modifiedImage;

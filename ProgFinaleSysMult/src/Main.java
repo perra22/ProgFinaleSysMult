@@ -150,7 +150,7 @@ public class Main implements ActionListener{
 		    
 			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 			f.getContentPane().add(label,BorderLayout.EAST);
-			f.getContentPane().add(histogramBW);
+			f.getContentPane().add(histogramBW);  
 			f.pack();
 			f.setLocation(100,100);
 			f.setVisible(true);
