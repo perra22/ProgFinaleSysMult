@@ -54,29 +54,104 @@ public class HistogramValues {
 		double mean = 0;
 		//immagine in B/W
 		if(bands==1) {
-			for(int i = 0; i < grey.length ; i++) {
-				sum +=  i*grey[i];
-				totPixel += grey[i];
+			int[] levels = new int[8];
+			for(int i = 1; i <= grey.length ; i++) {
+				sum +=  i*grey[i-1];
+				totPixel += grey[i-1];
+				if(i % 32 == 0) {
+					levels[(i/32)-1] = sum/totPixel;
+				}
 			}
 			mean = sum/totPixel;
-			double vm = mean/4;
-			double Vm = 256 - vm;
+			double meanWhite, meanBlack;
+			int sumW = 0, sumB = 0;
+			double vm = 0;
+			double Vm = 256;
+			for(int i = 0; i<3; i++) {
+				System.out.println(levels[i]+" ");
+				sumB +=  levels[i];
+			}
+			meanBlack = sumB/3;
+			for(int i = levels.length-1; i>4; i--) {
+				System.out.println(levels[i]+" ");
+				sumW +=  levels[i];
+			}
+			meanWhite = sumW/3;
+			
+			if(meanBlack<mean/2 && meanWhite>mean/2) {
+				Vm = 256;
+				vm = 96;
+			}
+			if(meanBlack>mean/2 && meanWhite<mean/2) {
+				Vm = 160;
+				vm = 0;
+			}
+			if(meanBlack<mean/2 && meanWhite<mean/2) {
+				Vm = 160;
+				vm = 96;
+			}
+			if(meanBlack>mean/4 && meanWhite>mean/4) {
+				Vm = 256;
+				vm = 0;
+			}
 			for(int x = 0; x < image.getWidth(); x++) {
 				for(int y = 0; y < image.getHeight(); y++) {
-					//if(image.getRaster().getSample(x, y, 0) < vm || image.getRaster().getSample(x, y, 0) > Vm) {
 						int g = image.getRaster().getSample(x, y, 0);
 						modifiedImage.getRaster().setSample(x, y, 0, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
-					//}
-					//else {
-					//	modifiedImage.getRaster().setSample(x, y, 0, image.getRaster().getSample(x, y, 0));
-					//}
 				}
 			}
 		}
 		else {
-			//double vm = mean/4;
-			double vm = 20;
-			double Vm = 256 - vm;
+			int[] levels = new int[8];
+			for(int i = 1; i <= rgb.length ; i++) {
+				sum +=  i*rgb[i-1];
+				totPixel += rgb[i-1];
+				if(i % 32 == 0) {
+					levels[(i/32)-1] = sum/totPixel;
+				}
+				
+			}
+			mean = sum/totPixel;
+			double meanWhite, meanBlack;
+			int sumW = 0, sumB = 0;
+			double vm = 0;
+			double Vm = 256;
+			for(int i = 0; i<3; i++) {
+				System.out.println(levels[i]+" ");
+				sumB +=  levels[i];
+			}
+			meanBlack = sumB/3;
+			
+			
+			for(int i = levels.length-1; i>4; i--) {
+				System.out.println(levels[i]+" ");
+				sumW +=  levels[i];
+			}
+			meanWhite = sumW/3;
+			
+			if(meanBlack<mean/2 && meanWhite>mean/2) {
+				Vm = 256;
+				vm = 96;
+			}
+			if(meanBlack>mean/2 && meanWhite<mean/2) {
+				Vm = 160;
+				vm = 0;
+			}
+			if(meanBlack<mean/2 && meanWhite<mean/2) {
+				Vm = 160;
+				vm = 96;
+			}
+			if(meanBlack>mean/4 && meanWhite>mean/4) {
+				Vm = 256;
+				vm = 0;
+			}
+			
+			System.out.println(vm);
+			System.out.println(Vm);
+			System.out.println("meanB: " + meanBlack);
+			System.out.println("meanW: " + meanWhite);
+			System.out.println("mean: " + mean);
+
 			for(int b = 0; b<bands;b++) {
 				for(int x = 0; x < image.getWidth(); x++) {
 					for(int y = 0; y < image.getHeight(); y++) {
@@ -88,6 +163,10 @@ public class HistogramValues {
 			
 		}
 		return modifiedImage;
+	}
+	
+	public void setvmAndVm(double mean, double meanBlack, double meanWhite) {
+		
 	}
 	
 }

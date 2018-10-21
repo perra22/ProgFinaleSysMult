@@ -144,16 +144,52 @@ public class Main implements ActionListener{
 			JLabel label = new JLabel(new ImageIcon(modifiedImage)); 
 			JFrame f = new JFrame("Corrected picture"); 
 			
-			HistogramPanel histogramBW = new HistogramPanel();
-		    histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
-		    histogramBW.showHistogram(istoCorrected.grey);
+			
+		    if(modifiedImage.getRaster().getNumBands() == 1) {
+		    		HistogramPanel histogramBW = new HistogramPanel();
+			    histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
+		    		histogramBW.showHistogram(istoCorrected.grey);
+			    
+				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+				f.getContentPane().add(label,BorderLayout.EAST);
+				f.getContentPane().add(histogramBW);  
+				f.pack();
+				f.setLocation(100,100);
+				f.setVisible(true);
+		    }
+		    else {
+		    		HistogramPanel histogramR = new HistogramPanel();
+		    		HistogramPanel histogramG = new HistogramPanel();
+		    		HistogramPanel histogramB = new HistogramPanel();
+		    		HistogramPanel histogramI = new HistogramPanel();
+		    		 
+		    		histogramR.setBorder(BorderFactory.createTitledBorder("Red Histogram"));
+		 		histogramG.setBorder(BorderFactory.createTitledBorder("Green Histogram"));
+		 		histogramB.setBorder(BorderFactory.createTitledBorder("Blue Histogram"));
+		 		histogramI.setBorder(BorderFactory.createTitledBorder("Intensity Histogram"));
+		 		
+		 		histogramR.showHistogram(istoCorrected.red);
+			    histogramG.showHistogram(istoCorrected.green);
+			    histogramB.showHistogram(istoCorrected.blue);
+			    histogramI.showHistogram(istoCorrected.rgb);
+			    
+			    JPanel container = new JPanel();
+				container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+			    container.add(histogramR);
+			    container.add(histogramG);
+			    container.add(histogramB);
+			    container.add(histogramI);
+			    
+			    f.getContentPane().add(container);
+			    f.add(label,BorderLayout.EAST);
+			    
+			    f.pack();
+			    f.setLocationRelativeTo(null); // Center the frame
+			    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			    f.setVisible(true);
+		    }
 		    
-			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-			f.getContentPane().add(label,BorderLayout.EAST);
-			f.getContentPane().add(histogramBW);  
-			f.pack();
-			f.setLocation(100,100);
-			f.setVisible(true);
 		}
 		else {
 			
