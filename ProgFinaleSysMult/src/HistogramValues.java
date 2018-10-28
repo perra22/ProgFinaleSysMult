@@ -146,11 +146,11 @@ public class HistogramValues {
 				vm = 0;
 			}
 			
-			System.out.println(vm);
+			/*System.out.println(vm);
 			System.out.println(Vm);
 			System.out.println("meanB: " + meanBlack);
 			System.out.println("meanW: " + meanWhite);
-			System.out.println("mean: " + mean);
+			System.out.println("mean: " + mean);*/
 
 			for(int b = 0; b<bands;b++) {
 				for(int x = 0; x < image.getWidth(); x++) {
@@ -165,8 +165,28 @@ public class HistogramValues {
 		return modifiedImage;
 	}
 	
-	public void setvmAndVm(double mean, double meanBlack, double meanWhite) {
+	
+	public double gamma(Double colorValue, Double p) {
+		double x = colorValue;
+		double y = Math.pow(x, p);
+		return y;
+	}
+	
+	public BufferedImage gammaCorrection(Double p) {
 		
+		BufferedImage modifiedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		for(int x = 0; x < image.getWidth(); x++) {
+			for(int y = 0; y < image.getHeight(); y++) {
+				for(int b = 0; b<bands;b++) {
+					int g = image.getRaster().getSample(x, y, b);
+					double pixel = gamma((double)g/255, p);
+					modifiedImage.getRaster().setSample(x, y, b, Math.round(pixel*255));
+
+
+				}
+			}	
+		}
+		return modifiedImage;
 	}
 	
 }
