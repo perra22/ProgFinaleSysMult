@@ -6,7 +6,7 @@ public class HistogramValues {
 	BufferedImage image;
 	int[] grey, red, green, blue, rgb;
 	int bands;
-	
+
 	public HistogramValues(BufferedImage image) {
 		this.image = image;
 		bands = image.getRaster().getNumBands();
@@ -20,7 +20,7 @@ public class HistogramValues {
 			rgb = new int[256];
 		}
 	}
-	
+
 	public void calculate() {
 		if(bands == 1) {
 			for(int x = 0; x<image.getWidth(); x++) {
@@ -44,9 +44,9 @@ public class HistogramValues {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	public BufferedImage histoCorrection() {
 		BufferedImage modifiedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		int sum = 0;
@@ -71,16 +71,14 @@ public class HistogramValues {
 			double vm = 0;
 			double Vm = 256;
 			for(int i = 0; i<3; i++) {
-				System.out.println(levels[i]+" ");
 				sumB +=  levels[i];
 			}
 			meanBlack = sumB/3;
 			for(int i = levels.length-1; i>4; i--) {
-				System.out.println(levels[i]+" ");
 				sumW +=  levels[i];
 			}
 			meanWhite = sumW/3;
-			
+
 			if(meanBlack<mean/4 && meanWhite>mean/4) {
 				Vm = 256;
 				vm = 96;
@@ -97,13 +95,11 @@ public class HistogramValues {
 				Vm = 256;
 				vm = 0;
 			}
-			System.out.println("Vm: " + Vm);
-			System.out.println("vm: "+ vm);
 
 			for(int x = 0; x < image.getWidth(); x++) {
 				for(int y = 0; y < image.getHeight(); y++) {
-						int g = image.getRaster().getSample(x, y, 0);
-						modifiedImage.getRaster().setSample(x, y, 0, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
+					int g = image.getRaster().getSample(x, y, 0);
+					modifiedImage.getRaster().setSample(x, y, 0, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
 				}
 			}
 		}
@@ -124,26 +120,25 @@ public class HistogramValues {
 					sumLevel = 0;
 
 				}
-				
+
 			}
 			mean = sum/totPixel;
 			double meanWhite, meanBlack;
 			int sumW = 0, sumB = 0;
 			double vm = 0;
 			double Vm = 256;
+
 			for(int i = 0; i<3; i++) {
-				System.out.println(levels[i]+" ");
 				sumB +=  levels[i];
 			}
 			meanBlack = sumB/3;
-			
-			
+
+
 			for(int i = levels.length-1; i>4; i--) {
-				System.out.println(levels[i]+" ");
 				sumW +=  levels[i];
 			}
 			meanWhite = sumW/3;
-			
+
 			if(meanBlack<mean/4 && meanWhite>mean/4) {
 				Vm = 256;
 				vm = 96;
@@ -160,34 +155,29 @@ public class HistogramValues {
 				Vm = 256;
 				vm = 0;
 			}
-			System.out.println("meanBlack: " + meanBlack);
-			System.out.println("meanWhite: " + meanWhite);
-			System.out.println("mean/4: " + mean/4);
-			System.out.println("Vm: " + Vm);
-			System.out.println("vm: "+ vm);
 			for(int b = 0; b<bands;b++) {
 				for(int x = 0; x < image.getWidth(); x++) {
 					for(int y = 0; y < image.getHeight(); y++) {
-							int g = image.getRaster().getSample(x, y, b);
-							modifiedImage.getRaster().setSample(x, y, b, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
+						int g = image.getRaster().getSample(x, y, b);
+						modifiedImage.getRaster().setSample(x, y, b, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
 					}
 				}
 			}
-			
+
 		}
 		return modifiedImage;
 	}
-	
+
 	//funzione gamma
 	public double gamma(Double colorValue, Double p) {
 		double x = colorValue;
 		double y = Math.pow(x, p);
 		return y;
 	}
-	
+
 	//applica la funzione gamma ad ogni pixel dell'immagine
 	public BufferedImage gammaCorrection(Double p) {
-		
+
 		BufferedImage modifiedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 		for(int x = 0; x < image.getWidth(); x++) {
 			for(int y = 0; y < image.getHeight(); y++) {
@@ -201,5 +191,5 @@ public class HistogramValues {
 		}
 		return modifiedImage;
 	}
-	
+
 }

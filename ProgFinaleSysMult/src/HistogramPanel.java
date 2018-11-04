@@ -8,54 +8,54 @@ import javax.swing.*;
 import java.awt.*;
 
 public class HistogramPanel extends JPanel {
-  // Count of occurrences of each category
-  private int[] count;
-  
-  /** Set the count histogram */
-  public void showHistogram(int[] count) {
-    this.count = count;
-    repaint();
-  }
+	// Count of occurrences of each category
+	private int[] count;
 
-  /** Paint the histogram */
-  protected void paintComponent(Graphics g) {
-    if (count == null) return; // No display if count is null
+	/** Set the count histogram */
+	public void showHistogram(int[] count) {
+		this.count = count;
+		repaint();
+	}
 
-    super.paintComponent(g);
+	/** Paint the histogram */
+	protected void paintComponent(Graphics g) {
+		if (count == null) return; // No display if count is null
 
-    // Find the panel size and bar width and interval dynamically
-    int width = getWidth();
-    int height = getHeight();
+		super.paintComponent(g);
 
-    // Find the maximum count. The maximum count has the highest bar
-    int maxCount = 0;
-    for (int i = 0; i < count.length; i++) {
-      if (maxCount < count[i])
-        maxCount = count[i];
-    }
+		// Find the panel size and bar width and interval dynamically
+		int width = getWidth();
+		int height = getHeight();
 
-    // Draw a horizontal base line
-    g.drawLine(10, height - 44, 10+ 2*256, height - 44);
-    for (int i = 0; i < count.length; i++) {
-      // Find the bar height
-      int barHeight = (int)(((double)count[i] / (double)maxCount) * (double)(height - 85));
+		// Find the maximum count. The maximum count has the highest bar
+		int maxCount = 0;
+		for (int i = 0; i < count.length; i++) {
+			if (maxCount < count[i])
+				maxCount = count[i];
+		}
 
-      // Find the bar width and position
-      int Xs = (int)(10 + 2*i);
+		// Draw a horizontal base line
+		g.drawLine(10, height - 44, 10+ 2*256, height - 44);
+		for (int i = 0; i < count.length; i++) {
+			// Find the bar height
+			int barHeight = (int)(((double)count[i] / (double)maxCount) * (double)(height - 85));
 
-      // Set the draw color
-      g.setColor(Color.black);
+			// Find the bar width and position
+			int Xs = (int)(10 + 2*i);
 
-      // Display the vertical line
-      g.drawLine(Xs, height - 45, Xs, height - 45 - barHeight);
-      g.drawLine(Xs+1, height - 45, Xs+1, height - 45 - barHeight);
+			// Set the draw color
+			g.setColor(Color.black);
 
-      g.setColor(Color.black);
-    }
-  }
+			// Display the vertical line
+			g.drawLine(Xs, height - 45, Xs, height - 45 - barHeight);
+			g.drawLine(Xs+1, height - 45, Xs+1, height - 45 - barHeight);
 
-  /** Override getPreferredSize */
-  public Dimension getPreferredSize() {
-    return new Dimension(20 + 2*256, 300);
-  }
+			g.setColor(Color.black);
+		}
+	}
+
+	/** Override getPreferredSize */
+	public Dimension getPreferredSize() {
+		return new Dimension(20 + 2*256, 300);
+	}
 }
