@@ -25,6 +25,7 @@ public class Main implements ActionListener{
 	static JFrame histogramFrame = null;
 	static BufferedImage originalImage = null, modifiedImage = null;;
 	static HistogramValues isto = null;
+	static Gamma gamma = null;
 	static JFileChooser fileChooser = null;
 	static JLabel label = null;
 	static JPanel container = null;
@@ -40,12 +41,15 @@ public class Main implements ActionListener{
 				File selectedFile = fileChooser.getSelectedFile();
 				originalImage = ImageIO.read(new File(selectedFile.getAbsolutePath()));
 				isto = new HistogramValues(originalImage);
+				gamma = new Gamma(originalImage);
 				ImageIcon icon = new ImageIcon(originalImage);
 				label = new JLabel(icon);
 				buttonContainer.add(bH);
 				buttonContainer.add(bG);
 				buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.X_AXIS));
 				histogramFrame.add(buttonContainer, BorderLayout.SOUTH);
+				container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
 			}
 
 
@@ -59,7 +63,6 @@ public class Main implements ActionListener{
 
 		if(originalImage.getRaster().getNumBands() == 1) {
 
-			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
 			HistogramPanel histogramBW = new HistogramPanel();
 			histogramBW.setBorder(BorderFactory.createTitledBorder("B/W Histogram"));
@@ -80,8 +83,6 @@ public class Main implements ActionListener{
 		}
 		else {
 
-
-			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
 			HistogramPanel histogramR = new HistogramPanel();
 			HistogramPanel histogramG = new HistogramPanel();
@@ -122,14 +123,14 @@ public class Main implements ActionListener{
 		container = new JPanel();
 		buttonContainer = new JPanel();
 		fileChooser = new JFileChooser();
-		bH = new JButton("Correzione con istogramma");
-		bG = new JButton("Correzione con gamma curve");
+		bH = new JButton("Histogram Correction");
+		bG = new JButton("Gamma Curve Correction");
 		bH.setName("bH");
 		bG.setName("bG");
 		bH.addActionListener(new Main());
 		bG.addActionListener(new Main());
-		bH.setToolTipText("Effettua una correzione automatica dell'immagine basata sul calcolo degli istogrammi");
-		bG.setToolTipText("Effettua una correzione dell'immagine attraverso una curva gamma");
+		bH.setToolTipText("automatic image correction based on histograms");
+		bG.setToolTipText("image correction based on gamma curve");
 
 	}
 
@@ -137,6 +138,7 @@ public class Main implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		JButton button = (JButton)e.getSource();
+		//caso di click sul bottone di correzione tramite istogramma
 		if(button.getName().equals("bH")) {
 			modifiedImage = isto.histoCorrection();
 			HistogramValues istoCorrected = new HistogramValues(modifiedImage);
@@ -158,6 +160,8 @@ public class Main implements ActionListener{
 				f.setLocation(100,100);
 				f.setVisible(true);
 			}
+			
+			//caso di click sul bottone di correzione tramite gamma curve
 			else {
 				HistogramPanel histogramR = new HistogramPanel();
 				HistogramPanel histogramG = new HistogramPanel();
@@ -186,22 +190,24 @@ public class Main implements ActionListener{
 				f.add(label,BorderLayout.EAST);
 
 				f.pack();
-				f.setLocationRelativeTo(null); // Center the frame
+				f.setLocationRelativeTo(null);
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				f.setVisible(true);
 			}
 
 		}
 		else {
+			
 			Double getP = getDoubleValue();
 			JLabel label = null;
 			JFrame f = null;
 			HistogramValues istoCorrected = null;
+			//riprongo la finestra di inserimento fin che non viene inserito un valore corretto
 			if(getP!=null) {
 				while (getP == -1.0) {
 					getP = getDoubleValue();
 				}
-				modifiedImage = isto.gammaCorrection(getP);
+				modifiedImage = gamma.gammaCorrection(getP);
 				istoCorrected = new HistogramValues(modifiedImage);
 				istoCorrected.calculate();
 
@@ -248,7 +254,7 @@ public class Main implements ActionListener{
 					f.add(label,BorderLayout.EAST);
 
 					f.pack();
-					f.setLocationRelativeTo(null); // Center the frame
+					f.setLocationRelativeTo(null);
 					f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					f.setVisible(true);
 				}
@@ -257,10 +263,11 @@ public class Main implements ActionListener{
 
 	}
 
+//	funzione che mostra una finestra di inserimento e che restituisce un double se il valore inserito e' corretto
 	public Double getDoubleValue() {
 		Double i;
 		try {
-			String resString = JOptionPane.showInputDialog("Inserisci il valore del parametro p (deve essere un numero): ", "");
+			String resString = JOptionPane.showInputDialog("Insert the value of P (it must be a number): ", "");
 			if(resString!= null) {
 				i = Double.parseDouble(resString);
 				return i;
