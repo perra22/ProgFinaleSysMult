@@ -112,6 +112,7 @@ public class HistogramValues {
 				vm = 0;
 			}
 
+			//applica la scelta di correzione
 			for(int x = 0; x < image.getWidth(); x++) {
 				for(int y = 0; y < image.getHeight(); y++) {
 					int g = image.getRaster().getSample(x, y, 0);
