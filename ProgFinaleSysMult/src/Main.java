@@ -50,17 +50,17 @@ public class Main implements ActionListener{
 				gamma = new Gamma(originalImage);
 				ImageIcon icon = new ImageIcon(originalImage);
 				label = new JLabel(icon);
-				
+
 				buttonHistoContainer.add(bHManuale);
 				buttonHistoContainer.add(bHNaive);
 				buttonHistoContainer.add(bH);
 				buttonHistoContainer.setLayout(new BoxLayout(buttonHistoContainer, BoxLayout.Y_AXIS));
-				
+
 				buttonGammaContainer.add(bGManuale);
 				buttonGammaContainer.add(bGFixed);
 				buttonGammaContainer.add(bGAuto);
 				buttonGammaContainer.setLayout(new BoxLayout(buttonGammaContainer, BoxLayout.Y_AXIS));
-				
+
 				buttonContainer.add(buttonHistoContainer);
 				buttonContainer.add(buttonGammaContainer);
 				buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.X_AXIS));
@@ -99,7 +99,7 @@ public class Main implements ActionListener{
 			histogramFrame.setVisible(true);
 		}
 		else {
-			
+
 			for (HistogramPanel hp : initilizeHistogram(isto)) {
 				container.add(hp);
 			}
@@ -124,40 +124,40 @@ public class Main implements ActionListener{
 		buttonHistoContainer = new JPanel();
 		buttonGammaContainer = new JPanel();
 		fileChooser = new JFileChooser();
-		
+
 		//bottoni istogrammi
 		bH = new JButton("Auto Histogram Correction");
 		bHNaive = new JButton("Naive Histogram Correction");
 		bHManuale = new JButton("Manual Histogram Correction");
-		
+
 		//bottoni curva gamma
 		bGFixed = new JButton("Gamma Curve Correction");
 		bGAuto = new JButton("Smart Gamma Curve Correction");
 		bGManuale = new JButton("Manual Gamma Curve Correction");
-		
+
 		bH.setName("bH");
 		bHNaive.setName("bHNaive");
 		bHManuale.setName("bHManuale");
-		
+
 		bGFixed.setName("bG2");
 		bGAuto.setName("bGAuto");
 		bGManuale.setName("bGManuale");
-		
+
 		bH.addActionListener(new Main());
 		bHNaive.addActionListener(new Main());
 		bHManuale.addActionListener(new Main());
-		
+
 		bGFixed.addActionListener(new Main());
 		bGAuto.addActionListener(new Main());
 		bGManuale.addActionListener(new Main());
 
 
 	}
-	
+
 	private static ArrayList<HistogramPanel> initilizeHistogram(HistogramValues istoCorrected){
-		
+
 		ArrayList<HistogramPanel> isto = new ArrayList<>();
-		
+
 		HistogramPanel histogramR = new HistogramPanel();
 		HistogramPanel histogramG = new HistogramPanel();
 		HistogramPanel histogramB = new HistogramPanel();
@@ -172,12 +172,12 @@ public class Main implements ActionListener{
 		histogramG.showHistogram(istoCorrected.green);
 		histogramB.showHistogram(istoCorrected.blue);
 		histogramI.showHistogram(istoCorrected.rgb);
-		
+
 		isto.add(histogramR);
 		isto.add(histogramG);
 		isto.add(histogramB);
 		isto.add(histogramI);
-		
+
 		return isto;
 	}
 
@@ -185,11 +185,15 @@ public class Main implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		JButton button = (JButton)e.getSource();
+		HistogramValues istoCorrected = null;
+		JLabel label = null; 
+		JFrame f = new JFrame("Corrected picture"); 
+
 		//caso di click sul bottone di correzione tramite istogramma
 		if(button.getName().equals("bHManuale")) {
-			
+
 			ArrayList<Integer> valori = get_vm_Vm();
-			
+
 			//riprongo la finestra di inserimento fin che non viene inserito un valore corretto
 			if(valori != null) {
 				while (valori.get(0) == -1.0) {
@@ -197,96 +201,29 @@ public class Main implements ActionListener{
 				}
 			}
 			modifiedImage = isto.manualHistoCorrection(valori.get(0), valori.get(1));
-			HistogramValues istoCorrected = new HistogramValues(modifiedImage);
+			istoCorrected = new HistogramValues(modifiedImage);
 			istoCorrected.calculate();
-			
-			JLabel label = new JLabel(new ImageIcon(modifiedImage)); 
-			JFrame f = new JFrame("Corrected picture"); 
-			
-			if(modifiedImage.getRaster().getNumBands() == 1) {
-				HistogramPanel histogramBW = new HistogramPanel();
-				histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
-				histogramBW.showHistogram(istoCorrected.grey);
-
-				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-				f.getContentPane().add(label,BorderLayout.EAST);
-				f.getContentPane().add(histogramBW);  
-				f.pack();
-				f.setLocation(100,100);
-				f.setVisible(true);
-			}
-			
-			else {
-				
-				container.removeAll();
-
-				JPanel container = new JPanel();
-				container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-				
-				for (HistogramPanel hp : initilizeHistogram(istoCorrected)) {
-					container.add(hp);
-				}
-
-				f.getContentPane().add(container);
-				f.add(label,BorderLayout.EAST);
-
-				f.pack();
-				f.setLocationRelativeTo(null);
-				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				f.setVisible(true);
-			}
+			label = new JLabel(new ImageIcon(modifiedImage)); 
 
 		}
-		
+		else if(button.getName().equals("bHNaive")) {
+			modifiedImage = isto.naiveHistoCorrection();
+			istoCorrected = new HistogramValues(modifiedImage);
+			istoCorrected.calculate();
+			label = new JLabel(new ImageIcon(modifiedImage)); 
+		}
 		else if(button.getName().equals("bH")) {
 			modifiedImage = isto.histoCorrection();
-			HistogramValues istoCorrected = new HistogramValues(modifiedImage);
+			istoCorrected = new HistogramValues(modifiedImage);
 			istoCorrected.calculate();
+			label = new JLabel(new ImageIcon(modifiedImage)); 
 
-			JLabel label = new JLabel(new ImageIcon(modifiedImage)); 
-			JFrame f = new JFrame("Corrected picture"); 
-
-
-			if(modifiedImage.getRaster().getNumBands() == 1) {
-				HistogramPanel histogramBW = new HistogramPanel();
-				histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
-				histogramBW.showHistogram(istoCorrected.grey);
-
-				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-				f.getContentPane().add(label,BorderLayout.EAST);
-				f.getContentPane().add(histogramBW);  
-				f.pack();
-				f.setLocation(100,100);
-				f.setVisible(true);
-			}
-			
-			else {
-				
-				container.removeAll();
-
-				JPanel container = new JPanel();
-				container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-				
-				for (HistogramPanel hp : initilizeHistogram(istoCorrected)) {
-					container.add(hp);
-				}
-
-				f.getContentPane().add(container);
-				f.add(label,BorderLayout.EAST);
-
-				f.pack();
-				f.setLocationRelativeTo(null);
-				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				f.setVisible(true);
-			}
 
 		}
 		else if(button.getName().equals("bGManuale")) {
-			
+
 			Double getP = getDoubleValue();
-			JLabel label = null;
-			JFrame f = null;
-			HistogramValues istoCorrected = null;
+
 			//riprongo la finestra di inserimento fin che non viene inserito un valore corretto
 			if(getP!=null) {
 				while (getP == -1.0) {
@@ -295,42 +232,68 @@ public class Main implements ActionListener{
 				modifiedImage = gamma.gammaCorrection(getP);
 				istoCorrected = new HistogramValues(modifiedImage);
 				istoCorrected.calculate();
-
 				label = new JLabel(new ImageIcon(modifiedImage)); 
-				f = new JFrame("Corrected picture"); 
 
-				if(modifiedImage.getRaster().getNumBands() == 1) {
-					HistogramPanel histogramBW = new HistogramPanel();
-					histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
-					histogramBW.showHistogram(istoCorrected.grey);
-
-					f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-					f.getContentPane().add(label,BorderLayout.EAST);
-					f.getContentPane().add(histogramBW);  
-					f.pack();
-					f.setLocation(100,100);
-					f.setVisible(true);
-				}
-				else {
-					container.removeAll();
-					
-					for (HistogramPanel hp : initilizeHistogram(istoCorrected)) {
-						container.add(hp);
-					}
-					f.getContentPane().add(container);
-					f.add(label,BorderLayout.EAST);
-
-					f.pack();
-					f.setLocationRelativeTo(null);
-					f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					f.setVisible(true);
-				}
 			}
+		}
+
+		else if(button.getName().equals("bG2")) {
+
+
+			modifiedImage = gamma.gammaCorrection2(isto);
+			istoCorrected = new HistogramValues(modifiedImage);
+			istoCorrected.calculate();
+			label = new JLabel(new ImageIcon(modifiedImage)); 
+
+		}
+		
+		else if(button.getName().equals("bGAuto")) {
+
+
+			modifiedImage = gamma.gammaAutoCorrection(isto);
+			istoCorrected = new HistogramValues(modifiedImage);
+			istoCorrected.calculate();
+			label = new JLabel(new ImageIcon(modifiedImage)); 
+
+		}
+
+
+		if(modifiedImage.getRaster().getNumBands() == 1) {
+			HistogramPanel histogramBW = new HistogramPanel();
+			histogramBW.setBorder(BorderFactory.createTitledBorder("Corrected B/W Histogram"));
+			histogramBW.showHistogram(istoCorrected.grey);
+
+			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+			f.getContentPane().add(label,BorderLayout.EAST);
+			f.getContentPane().add(histogramBW);  
+			f.pack();
+			f.setLocation(100,100);
+			f.setVisible(true);
+		}
+
+		else {
+
+			container.removeAll();
+
+			JPanel container = new JPanel();
+			container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+			for (HistogramPanel hp : initilizeHistogram(istoCorrected)) {
+				container.add(hp);
+			}
+
+			f.getContentPane().add(container);
+			f.add(label,BorderLayout.EAST);
+
+			f.pack();
+			f.setLocationRelativeTo(null);
+			f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			f.setVisible(true);
 		}
 
 	}
 
-//	funzione che mostra una finestra di inserimento e che restituisce un double se il valore inserito e' corretto
+	//	funzione che mostra una finestra di inserimento e che restituisce un double se il valore inserito e' corretto
 	public Double getDoubleValue() {
 		Double i;
 		try {
@@ -346,7 +309,7 @@ public class Main implements ActionListener{
 
 
 	}
-	
+
 	public ArrayList<Integer> get_vm_Vm() {
 		ArrayList<Integer> v = new ArrayList<>();
 		try {
@@ -358,7 +321,7 @@ public class Main implements ActionListener{
 				if (vmRes<256 && vmRes >=0 && VmRes <256 && VmRes >=0) {
 					v.add(vmRes);
 					v.add(VmRes);
-					
+
 					return v;
 				}
 			}

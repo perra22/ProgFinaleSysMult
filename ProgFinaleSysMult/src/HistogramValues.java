@@ -209,4 +209,65 @@ public class HistogramValues {
 		
 		return modifiedImage;
 	}
+	
+	
+	public BufferedImage naiveHistoCorrection() {
+		int vm = 0, Vm = 256;
+		BufferedImage modifiedImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		
+		if (bands == 1) {
+			
+			//ottengo il primo valore di vm diverso da 0
+			for(int i = 0; i<256; i++) {
+				if (grey[i] > 0) {
+					vm = grey[i];
+					break;
+				}
+			}
+			//ottengo l'ultimo valore di Vm diverso da 0
+			for(int j = 255; j>=0; j--) {
+				if (grey[j] > 0) {
+					Vm = grey[j];
+					break;
+				}
+			}
+			
+			//applica la scelta di correzione
+			for(int x = 0; x < image.getWidth(); x++) {
+				for(int y = 0; y < image.getHeight(); y++) {
+					int g = image.getRaster().getSample(x, y, 0);
+					modifiedImage.getRaster().setSample(x, y, 0, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
+				}
+			}
+		}
+		else {
+			//ottengo il primo valore di vm diverso da 0
+			for(int i = 0; i<256; i++) {
+				if (rgb[i] > 0) {
+					vm = i;
+					break;
+				}
+			}
+			//ottengo l'ultimo valore di Vm diverso da 0
+			for(int j = 255; j>=0; j--) {
+				if (rgb[j] > 0) {
+					Vm = j;
+					break;
+				}
+			}
+			
+			for(int b = 0; b<bands;b++) {
+				for(int x = 0; x < image.getWidth(); x++) {
+					for(int y = 0; y < image.getHeight(); y++) {
+						int g = image.getRaster().getSample(x, y, b);
+						modifiedImage.getRaster().setSample(x, y, b, Math.max(0, Math.min(255, 255*(g - vm)/(Vm - vm))));
+					}
+				}
+			}
+		}
+		
+		return modifiedImage;
+	}
+
+
 }
